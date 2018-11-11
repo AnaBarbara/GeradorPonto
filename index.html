@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gerador de ponto</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <v-app light>
+            <v-toolbar class="white">
+                <v-toolbar-title v-text="title"></v-toolbar-title>
+            </v-toolbar>
+            <v-content>
+                <section>
+                    <v-parallax src="assets/plane.jpg" height="600" style="background: rgba(243, 193, 141, 0.27);">
+                        <v-form ref="form" v-model="valid">
+                            <v-layout mt-5 pt-5>
+                                <v-spacer></v-spacer>
+                                <v-flex>
+                                    <v-select required :rules="Rules" :items="month" v-model="time.month" label="Selecione o mês" color="white"></v-select>
+                                </v-flex>
+                                <v-spacer></v-spacer>
+                                <v-flex>
+                                    <v-select required :rules="Rules" :items="year" v-model="time.year" label="Selecione o ano" color="white"></v-select>
+                                </v-flex>
+                                <v-spacer></v-spacer>
+                            </v-layout>
+                            <v-layout>
+                                <v-spacer></v-spacer>
+                                <v-flex>
+                                    <v-text-field required :rules="Rules" label="Entrada" v-model="time.startTime" color="white" mask="##:##"></v-text-field>
+                                </v-flex>
+                                <v-spacer></v-spacer>
+                                <v-flex>
+                                    <v-text-field required :rules="Rules" label="Saída almoço" v-model="time.startLunch" color="white" mask="##:##"></v-text-field>
+                                </v-flex>
+                                <v-spacer></v-spacer>
+                                <v-flex>
+                                    <v-text-field required :rules="Rules" label="Volta almoço" v-model="time.endLunch" color="white" mask="##:##"></v-text-field>
+                                </v-flex>
+                                <v-spacer></v-spacer>
+                                <v-flex>
+                                    <v-text-field required :rules="Rules" label="Saída" v-model="time.endTime" color="white" mask="##:##"></v-text-field>
+                                </v-flex>
+                                <v-spacer></v-spacer>
+                            </v-layout>
+                        </v-form>
+                        <v-layout column align-center justify-center>
+                            <v-btn class="blue accent-4" dark large @click="postNow" :disabled="!valid">
+                                Gerar ponto
+                            </v-btn>
+                        </v-layout>
+                    </v-parallax>
+                </section>
+
+                <section>
+                    <v-layout>
+                        <v-flex>
+                            <v-container>
+                                <v-data-table hide-actions :headers="headers" :items="time" class="elevation-1">
+                                    <template slot="items" slot-scope="props">
+                                  <td>{{ props.item.startTime }}</td>
+                                  <td>{{ props.item.startLunch }}</td>
+                                  <td>{{ props.item.endLunch }}</td>
+                                  <td>{{ props.item.endTime }}</td>
+                                </template>
+                                </v-data-table>
+                            </v-container>
+                        </v-flex>
+                    </v-layout>
+                </section>
+
+                <v-footer class="blue darken-2">
+                    <v-layout row wrap align-center>
+                        <v-flex xs12>
+                            <div class="white--text ml-3" align-center>
+                                Made with
+                                <v-icon class="red--text">favorite</v-icon>
+                                by <a class="white--text" href="https://github.com/RobsonAlves" target="_blank">Robson</a> and <a class="white--text" href="https://github.com/AnaBarbara">Ana</a>
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </v-footer>
+            </v-content>
+        </v-app>
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    title: 'Gerador de ponto',
+                    month: [{
+                        text: 'Janeiro',
+                        value: '1'
+                    }, {
+                        text: 'Fevereiro',
+                        value: '2'
+                    }, {
+                        text: 'Março',
+                        value: '3'
+                    }, {
+                        text: 'Abril',
+                        value: '4'
+                    }, {
+                        text: 'Maio',
+                        value: '5'
+                    }, {
+                        text: 'Junho',
+                        value: '6'
+                    }, {
+                        text: 'Julho',
+                        value: '7'
+                    }, {
+                        text: 'Agosto',
+                        value: '8'
+                    }, {
+                        text: 'Setembro',
+                        value: '9'
+                    }, {
+                        text: 'Outubro',
+                        value: '10'
+                    }, {
+                        text: 'Novembro',
+                        value: '11'
+                    }, {
+                        text: 'Dezembro',
+                        value: '12'
+                    }],
+                    headers: [{
+                        text: 'Entrada',
+                        value: 'startTime'
+                    }, {
+                        text: 'Saída Almoço',
+                        value: 'startLunch'
+                    }, {
+                        text: 'Volta almoço',
+                        value: 'endLunch'
+                    }, {
+                        text: 'Saída',
+                        value: 'endTime'
+                    }],
+                    time: [{
+                        "month": 0,
+                        "year": 2018,
+                        "startTime": 0,
+                        "startLunch": 0,
+                        "endLunch": 0,
+                        "endTime": 0
+                    }],
+                    year: [{
+                        text: '2018',
+                        value: '2018'
+                    }],
+                    Rules: [
+                        v => !!v || 'Campo obrigatório'
+                    ],
+                    valid: false
+                }
+            },
+            methods: {
+                postNow: function() {
+                    let formData = {
+                        month: this.time.month,
+                        year: this.time.year,
+                        startTime: this.time.startTime,
+                        startLunch: this.time.startLunch,
+                        endLunch: this.time.endLunch,
+                        endTime: this.time.endTime
+                    }
+                    axios.post('https://geradordeponto.herokuapp.com/generate', formData, {
+                        headers: {
+                            'Content-type': 'multipart/form-data',
+                        }
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
